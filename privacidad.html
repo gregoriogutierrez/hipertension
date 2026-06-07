@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacidad · MI PRESIÓN ARTERIAL</title>
+  <meta name="description" content="Información de privacidad, protección de datos y uso previsto de la aplicación MI PRESIÓN ARTERIAL." />
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --text:#162033;
+      --muted:#64748b;
+      --primary:#0ea5e9;
+      --primary-dark:#0369a1;
+      --line:#dbe3ef;
+      --soft:#e0f2fe;
+      --success:#16a34a;
+      --warning:#f59e0b;
+      --shadow:0 12px 28px rgba(15,23,42,.08);
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(14,165,233,.18), transparent 32rem),
+        linear-gradient(180deg,#f8fbff 0%,var(--bg) 100%);
+      color:var(--text);
+      line-height:1.65;
+    }
+
+    header{
+      background:linear-gradient(135deg,#0ea5e9,#2563eb);
+      color:white;
+      padding:34px 18px 40px;
+      text-align:center;
+    }
+
+    .header-inner{
+      max-width:980px;
+      margin:auto;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.16);
+      border:1px solid rgba(255,255,255,.28);
+      font-weight:700;
+      font-size:.9rem;
+      margin-bottom:14px;
+    }
+
+    h1{
+      margin:0;
+      font-size:clamp(2rem,5vw,3rem);
+      line-height:1.1;
+      letter-spacing:-.04em;
+    }
+
+    header p{
+      max-width:760px;
+      margin:14px auto 0;
+      font-size:1.08rem;
+      opacity:.95;
+    }
+
+    main{
+      width:min(980px, calc(100% - 28px));
+      margin:-26px auto 40px;
+      display:grid;
+      gap:18px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:22px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero-card{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:18px;
+      align-items:center;
+    }
+
+    h2{
+      margin:0 0 10px;
+      font-size:1.35rem;
+      letter-spacing:-.02em;
+    }
+
+    h3{
+      margin:20px 0 8px;
+      font-size:1.05rem;
+    }
+
+    p{margin:0 0 12px}
+
+    .muted{color:var(--muted)}
+
+    .notice{
+      border-radius:18px;
+      padding:16px;
+      background:#ecfdf5;
+      border:1px solid #bbf7d0;
+      color:#14532d;
+      font-weight:700;
+    }
+
+    .warning{
+      border-radius:18px;
+      padding:16px;
+      background:#fffbeb;
+      border:1px solid #fde68a;
+      color:#78350f;
+    }
+
+    .privacy-list{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:10px;
+      margin:16px 0 0;
+      padding:0;
+      list-style:none;
+    }
+
+    .privacy-list li{
+      padding:12px 13px;
+      border-radius:15px;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+
+    .privacy-list span{
+      color:var(--success);
+      font-weight:900;
+      flex:0 0 auto;
+    }
+
+    .info-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+      margin-top:12px;
+    }
+
+    .mini-card{
+      border:1px solid var(--line);
+      background:#f8fafc;
+      border-radius:16px;
+      padding:14px;
+    }
+
+    .mini-card strong{
+      display:block;
+      margin-bottom:4px;
+      color:var(--primary-dark);
+    }
+
+    .contact{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:12px;
+      margin-top:12px;
+    }
+
+    a.button{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:44px;
+      padding:10px 16px;
+      border-radius:14px;
+      background:var(--primary);
+      color:white;
+      font-weight:800;
+      text-decoration:none;
+    }
+
+    a.button:hover{background:var(--primary-dark)}
+
+    .email{
+      font-weight:800;
+      color:var(--primary-dark);
+      word-break:break-word;
+    }
+
+    .dev-list{
+      margin:10px 0 0;
+      padding-left:1.2rem;
+    }
+
+    footer{
+      width:min(980px, calc(100% - 28px));
+      margin:0 auto 32px;
+      color:var(--muted);
+      text-align:center;
+      font-size:.92rem;
+    }
+
+    @media (max-width:760px){
+      header{padding:28px 16px 36px}
+      main{width:min(100% - 20px, 980px)}
+      .card{padding:18px;border-radius:18px}
+      .hero-card{grid-template-columns:1fr}
+      .privacy-list{grid-template-columns:1fr}
+      .info-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="badge">Privacidad y protección de datos</div>
+      <h1>MI PRESIÓN ARTERIAL</h1>
+      <p>Aplicación web para registrar y consultar mediciones de presión arterial y frecuencia cardiaca desde el propio dispositivo del usuario.</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="card hero-card">
+      <div>
+        <h2>Resumen de privacidad</h2>
+        <p>Esta aplicación está diseñada para funcionar de forma local. Las mediciones se guardan en el navegador del usuario y no se envían a ningún servidor.</p>
+        <div class="notice">Tus datos permanecen en tu dispositivo. Ninguna medición médica sale del navegador.</div>
+      </div>
+      <div class="mini-card">
+        <strong>Uso previsto</strong>
+        Registro personal de presión arterial, pulso y consulta de estadísticas por periodos y franjas horarias.
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Descripción</h2>
+      <p><strong>MI PRESIÓN ARTERIAL</strong> permite registrar mediciones de presión arterial sistólica, presión arterial diastólica y pulso.</p>
+      <p>La aplicación genera estadísticas semanales, mensuales, trimestrales y anuales, y calcula promedios diarios por franjas horarias: mañana, tarde y noche.</p>
+    </section>
+
+    <section class="card">
+      <h2>Protección de datos y privacidad</h2>
+      <p>La aplicación se ha desarrollado con un enfoque de máxima privacidad para el usuario.</p>
+
+      <ul class="privacy-list">
+        <li><span>✓</span><div>Los datos se almacenan exclusivamente en el navegador mediante <strong>Local Storage</strong>.</div></li>
+        <li><span>✓</span><div>No existe ningún servidor asociado a la aplicación.</div></li>
+        <li><span>✓</span><div>No se realiza ninguna transmisión de datos a Internet.</div></li>
+        <li><span>✓</span><div>No se recopilan datos personales.</div></li>
+        <li><span>✓</span><div>No se utilizan cookies de seguimiento.</div></li>
+        <li><span>✓</span><div>No se usan herramientas de analítica ni servicios de terceros.</div></li>
+        <li><span>✓</span><div>Ninguna información médica o sanitaria sale del dispositivo del usuario.</div></li>
+      </ul>
+
+      <h3>Conclusión</h3>
+      <div class="notice">Todas las mediciones permanecen únicamente en el dispositivo donde se introducen y son gestionadas exclusivamente por el propio usuario.</div>
+    </section>
+
+    <section class="card">
+      <h2>Responsabilidad del usuario</h2>
+      <p>Los datos quedan guardados en el navegador del usuario. La aplicación no dispone actualmente de una función de copia de seguridad ni de exportación de datos, por lo que el usuario debe tener en cuenta que, si borra los datos del navegador o cambia de dispositivo, las mediciones pueden perderse.</p>
+    </section>
+
+    <section class="card">
+      <h2>Uso sanitario previsto</h2>
+      <p>Esta aplicación está destinada únicamente al registro y seguimiento personal de datos de presión arterial y frecuencia cardiaca.</p>
+      <p><strong>No sustituye</strong> el diagnóstico, tratamiento o seguimiento realizado por profesionales sanitarios.</p>
+      <p>Ante cualquier duda médica, el usuario debe consultar con su médico o profesional sanitario de referencia.</p>
+    </section>
+
+    <section class="card">
+      <h2>Información y soporte</h2>
+      <p>Para cualquier consulta, sugerencia o información adicional, puede contactar mediante correo electrónico:</p>
+      <div class="contact">
+        <a class="button" href="mailto:gregmarbella1@gmail.com">Enviar email</a>
+        <span class="email">gregmarbella1@gmail.com</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Sobre el desarrollador</h2>
+      <p>El desarrollador cuenta con experiencia en el desarrollo de aplicaciones médicas, industriales y de adquisición de datos, así como en la integración de soluciones de Inteligencia Artificial.</p>
+      <div class="info-grid">
+        <div class="mini-card"><strong>Aplicaciones médicas</strong>Soluciones relacionadas con registro, monitorización y tratamiento de datos sanitarios.</div>
+        <div class="mini-card"><strong>Entornos industriales</strong>Aplicaciones para adquisición de datos, control y seguimiento de variables.</div>
+        <div class="mini-card"><strong>Inteligencia Artificial</strong>Integración de IA para análisis, automatización y apoyo a la toma de decisiones.</div>
+      </div>
+      <ul class="dev-list">
+        <li>Desarrollo de aplicaciones de gestión y adquisición de datos.</li>
+        <li>Sistemas de monitorización y registro de variables.</li>
+        <li>Automatización de procesos y análisis de datos.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Licencia y limitación de responsabilidad</h2>
+      <p>El uso de esta aplicación se realiza bajo la responsabilidad exclusiva del usuario.</p>
+      <p>La aplicación se distribuye sin garantías explícitas o implícitas respecto a la exactitud de los datos, disponibilidad o adecuación para un propósito determinado.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>MI PRESIÓN ARTERIAL · Información de privacidad y uso responsable</p>
+  </footer>
+</body>
+</html>
