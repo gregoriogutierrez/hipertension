@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mi presión arterial</title>
+  <style>
+    :root{
+      --bg:#f4f7fb; --card:#fff; --text:#162033; --muted:#697386;
+      --primary:#0ea5e9; --primary-dark:#0284c7; --line:#dbe3ef;
+      --danger:#dc2626; --ok:#16a34a;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+    header{background:linear-gradient(135deg,var(--primary),#2563eb);color:white;padding:20px 16px;text-align:center}
+    header h1{margin:0;font-size:1.5rem} header p{margin:.35rem 0 0;opacity:.9}
+    main{max-width:1100px;margin:auto;padding:16px;display:grid;gap:16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 8px 22px rgba(15,23,42,.06)}
+    h2{font-size:1.15rem;margin:0 0 12px}
+    form{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:end}
+    form button{min-height:44px}
+    label{font-size:.85rem;color:var(--muted);display:grid;gap:5px}
+    input,select,button{font:inherit;border-radius:12px;border:1px solid var(--line);padding:11px;background:white;color:var(--text)}
+    select{appearance:auto}
+    button{border:0;background:var(--primary);color:white;font-weight:700;cursor:pointer}
+    button:hover{background:var(--primary-dark)}
+    .secondary{background:#e2e8f0;color:#0f172a}.secondary:hover{background:#cbd5e1}
+    .danger{background:var(--danger)}.danger:hover{background:#b91c1c}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .pill{padding:7px 10px;border-radius:999px;background:#e0f2fe;color:#075985;font-weight:700;font-size:.85rem}
+    table{width:100%;border-collapse:collapse;overflow:hidden;border-radius:14px}
+    th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+    th{background:#f8fafc;color:#475569;font-size:.85rem}
+    tr:last-child td{border-bottom:0}
+    .muted{color:var(--muted)}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .stat-head{background:#0ea5e9;color:white;font-weight:800;padding:9px 12px;border-radius:12px;margin:10px 0}
+    .right{text-align:right}
+    .small{font-size:.85rem}
+    @media (max-width:800px){
+      form{grid-template-columns:1fr 1fr}
+      form button{grid-column:1/-1}
+      .grid2{grid-template-columns:1fr}
+      th,td{padding:8px;font-size:.9rem}
+      .hide-mobile{display:none}
+    }
+    #borrarTodo{
+    display:none;
+}
+  </style>
+</head>
+<body>
+<header>
+  <h1>Mi presión arterial</h1>
+  <p>Dr. Alberto Marañés Antoñanzas</p>
+  <p>Registra tensión y pulso. Mañana: 06:00-11:59 · Tarde: 12:00-19:59 · Noche: 20:00-05:59.</p>
+</header>
+
+<main>
+  <section class="card">
+    <h2>Nueva medición</h2>
+    <form id="formMedida">
+      <label>Fecha
+        <input id="fecha" type="date" required>
+      </label>
+      <label>Hora
+        <input id="hora" type="time" required>
+      </label>
+      <label>Sistólica
+        <select id="sistolica" required></select>
+      </label>
+      <label>Diastólica
+        <select id="diastolica" required></select>
+      </label>
+      <label>Pulso
+        <select id="pulso" required></select>
+      </label>
+      <button type="submit">Guardar medición</button>
+      <!-- <button class="secondary" id="datosPrueba" type="button">Generar datos de prueba de 1 año</button> -->
+    </form>
+    <p class="muted small">La franja se calcula automáticamente por la hora: mañana de 06:00 a 11:59; tarde de 12:00 a 19:59; noche de 20:00 a 05:59.</p>
+  </section>
+
+  <section class="card">
+    <div class="row">
+      <h2 style="margin-right:auto">Estadísticas</h2>
+      <label>Periodo
+        <select id="periodo">
+          <option value="semana">Semanal</option>
+          <option value="mes">Mensual</option>
+          <option value="trimestre">Trimestral</option>
+          <option value="anio">Anual</option>
+        </select>
+      </label>
+    </div>
+    <div id="estadisticas"></div>
+  </section>
+
+  <section class="grid2">
+    <div class="card">
+      <h2>Promedios diarios por franja</h2>
+      <div id="diarios"></div>
+    </div>
+    <div class="card">
+      <div class="row">
+        <h2 style="margin-right:auto">Mediciones guardadas</h2>
+        <button class="danger" id="borrarTodo" type="button">Borrar todo</button>
+      </div>
+      <div id="lista"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+  const KEY = "tension_pulso_v1";
+  let medidas = [];
+  try {
+    medidas = JSON.parse(localStorage.getItem(KEY) || "[]");
+    if(!Array.isArray(medidas)) medidas = [];
+  } catch(e) {
+    medidas = [];
+  }
+
+  const $ = id => document.getElementById(id);
+  const pad = n => String(n).padStart(2,"0");
+
+  function hoyISO(){
+    const d = new Date();
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  }
+  function horaActual(){
+    const d = new Date();
+    return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+  function guardar(){ localStorage.setItem(KEY, JSON.stringify(medidas)); }
+  function franjaPorHora(hora){
+    const h = Number(hora.slice(0,2));
+    if(h >= 6 && h < 12) return "mañana";
+    if(h >= 12 && h < 20) return "tarde";
+    return "noche";
+  }
+  function media(nums){ return nums.length ? nums.reduce((a,b)=>a+b,0)/nums.length : 0; }
+  function redondea(n){ return Math.round(n); }
+
+  function getISOWeek(dateStr){
+    const d = new Date(dateStr + "T00:00:00");
+    d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+    const yearStart = new Date(d.getFullYear(),0,1);
+    const week = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    return {year:d.getFullYear(), week};
+  }
+
+  function clavePeriodo(fecha, tipo){
+    const d = new Date(fecha + "T00:00:00");
+    const y = d.getFullYear();
+    const m = d.getMonth()+1;
+    if(tipo === "semana"){
+      const w = getISOWeek(fecha);
+      return {clave:`${w.year}-S${pad(w.week)}`, titulo:`Año: ${w.year} / Semana: ${w.week}`};
+    }
+    if(tipo === "mes") return {clave:`${y}-M${pad(m)}`, titulo:`Año: ${y} / Mes: ${pad(m)}`};
+    if(tipo === "trimestre"){
+      const t = Math.ceil(m/3);
+      return {clave:`${y}-T${t}`, titulo:`Año: ${y} / Trimestre: ${t}`};
+    }
+    return {clave:`${y}`, titulo:`Año: ${y}`};
+  }
+
+  // Primero promedia todas las mediciones del mismo día y misma franja.
+  // Ese promedio diario cuenta como UNA sola medida para estadísticas semanales, mensuales, trimestrales y anuales.
+  function promediosDiarios(){
+    const grupos = {};
+    for(const r of medidas){
+      const franja = franjaPorHora(r.hora);
+      const key = `${r.fecha}|${franja}`;
+      if(!grupos[key]) grupos[key] = {fecha:r.fecha, franja, sistolica:[], diastolica:[], pulso:[], cantidad:0};
+      grupos[key].sistolica.push(r.sistolica);
+      grupos[key].diastolica.push(r.diastolica);
+      grupos[key].pulso.push(r.pulso);
+      grupos[key].cantidad++;
+    }
+    return Object.values(grupos).map(g => ({
+      fecha:g.fecha,
+      franja:g.franja,
+      sistolica:redondea(media(g.sistolica)),
+      diastolica:redondea(media(g.diastolica)),
+      pulso:redondea(media(g.pulso)),
+      cantidad:g.cantidad
+    })).sort((a,b)=> (b.fecha+a.franja).localeCompare(a.fecha+b.franja));
+  }
+
+  function ordenFranja(franja){
+    return {"mañana": 1, "tarde": 2, "noche": 3}[franja] || 99;
+  }
+
+  function estadisticasPeriodo(tipo){
+    const diarios = promediosDiarios();
+    const grupos = {};
+    for(const r of diarios){
+      const p = clavePeriodo(r.fecha, tipo);
+      const key = `${p.clave}|${r.franja}`;
+      if(!grupos[key]) grupos[key] = {clave:p.clave, titulo:p.titulo, franja:r.franja, s:[], d:[], p:[], n:0};
+      grupos[key].s.push(r.sistolica);
+      grupos[key].d.push(r.diastolica);
+      grupos[key].p.push(r.pulso);
+      grupos[key].n++;
+    }
+    return Object.values(grupos).map(g => ({
+      ...g,
+      sMin:Math.min(...g.s), sMax:Math.max(...g.s), sProm:redondea(media(g.s)),
+      dMin:Math.min(...g.d), dMax:Math.max(...g.d), dProm:redondea(media(g.d)),
+      pMin:Math.min(...g.p), pMax:Math.max(...g.p), pProm:redondea(media(g.p))
+    })).sort((a,b)=> b.clave.localeCompare(a.clave) || ordenFranja(a.franja) - ordenFranja(b.franja));
+  }
+
+  function renderEstadisticas(){
+    const tipo = $("periodo").value;
+    const stats = estadisticasPeriodo(tipo);
+    if(!stats.length){ $("estadisticas").innerHTML = `<p class="muted">No hay datos todavía.</p>`; return; }
+    let html = "";
+    for(const g of stats){
+      html += `
+        <div class="stat-head">${g.titulo} · ${g.franja.toUpperCase()} · ${g.n} promedio(s) diario(s)</div>
+        <table>
+          <thead><tr><th>Variable</th><th>Min</th><th>Max</th><th>Prom</th></tr></thead>
+          <tbody>
+            <tr><td>Sistólica</td><td>${g.sMin}</td><td>${g.sMax}</td><td><b>${g.sProm}</b></td></tr>
+            <tr><td>Diastólica</td><td>${g.dMin}</td><td>${g.dMax}</td><td><b>${g.dProm}</b></td></tr>
+            <tr><td>Pulso</td><td>${g.pMin}</td><td>${g.pMax}</td><td><b>${g.pProm}</b></td></tr>
+          </tbody>
+        </table>`;
+    }
+    $("estadisticas").innerHTML = html;
+  }
+
+  function renderDiarios(){
+    const diarios = promediosDiarios();
+    if(!diarios.length){ $("diarios").innerHTML = `<p class="muted">Aún no hay promedios diarios.</p>`; return; }
+    $("diarios").innerHTML = `
+      <table>
+        <thead><tr><th>Fecha</th><th>Franja</th><th>Sis</th><th>Dia</th><th>Pulso</th><th class="hide-mobile">Mediciones</th></tr></thead>
+        <tbody>${diarios.map(r=>`
+          <tr><td>${r.fecha}</td><td><span class="pill">${r.franja}</span></td><td>${r.sistolica}</td><td>${r.diastolica}</td><td>${r.pulso}</td><td class="hide-mobile">${r.cantidad}</td></tr>`).join("")}</tbody>
+      </table>`;
+  }
+
+  function renderLista(){
+    const ordenadas = [...medidas].sort((a,b)=> (b.fecha+b.hora).localeCompare(a.fecha+a.hora));
+    if(!ordenadas.length){ $("lista").innerHTML = `<p class="muted">No hay mediciones guardadas.</p>`; return; }
+    $("lista").innerHTML = `
+      <table>
+        <thead><tr><th>Fecha</th><th>Hora</th><th>Sis/Dia</th><th>Pulso</th><th></th></tr></thead>
+        <tbody>${ordenadas.map(r=>`
+          <tr>
+            <td>${r.fecha}<br><span class="muted small">${franjaPorHora(r.hora)}</span></td>
+            <td>${r.hora}</td><td>${r.sistolica}/${r.diastolica}</td><td>${r.pulso}</td>
+            <td class="right"><button class="danger small" onclick="borrar('${r.id}')">×</button></td>
+          </tr>`).join("")}</tbody>
+      </table>`;
+  }
+
+  function render(){ renderEstadisticas(); renderDiarios(); renderLista(); }
+
+  window.borrar = id => {
+    medidas = medidas.filter(m => m.id !== id);
+    guardar(); render();
+  };
+
+  function rellenarTambor(id, min, max, valorInicial){
+    const sel = $(id);
+    sel.innerHTML = "";
+    for(let i = min; i <= max; i++){
+      const op = document.createElement("option");
+      op.value = i;
+      op.textContent = i;
+      if(i === valorInicial) op.selected = true;
+      sel.appendChild(op);
+    }
+  }
+
+  $("fecha").value = hoyISO();
+  $("hora").value = horaActual();
+  rellenarTambor("sistolica", 80, 220, 125);
+  rellenarTambor("diastolica", 40, 130, 80);
+  rellenarTambor("pulso", 40, 160, 70);
+
+  $("formMedida").addEventListener("submit", e => {
+    e.preventDefault();
+    const r = {
+      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()+Math.random()),
+      fecha: $("fecha").value,
+      hora: $("hora").value,
+      sistolica: Number($("sistolica").value),
+      diastolica: Number($("diastolica").value),
+      pulso: Number($("pulso").value)
+    };
+    medidas.push(r); guardar(); render();
+    $("hora").value = horaActual();
+  });
+
+  function aleatorio(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
+  function fechaHaceDias(dias){
+    const d = new Date();
+    d.setDate(d.getDate() - dias);
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  }
+  function horaAleatoria(franja){
+    let h;
+    if(franja === "mañana") h = aleatorio(6,11);
+    else if(franja === "tarde") h = aleatorio(12,19);
+    else h = Math.random() < 0.5 ? aleatorio(20,23) : aleatorio(0,5);
+    return `${pad(h)}:${pad(aleatorio(0,59))}`;
+  }
+  function nuevaMedidaPrueba(fecha, franja){
+    const baseSis = franja === "mañana" ? aleatorio(115,145) : franja === "tarde" ? aleatorio(118,150) : aleatorio(120,155);
+    const baseDia = franja === "mañana" ? aleatorio(65,88) : franja === "tarde" ? aleatorio(68,92) : aleatorio(70,95);
+    return {
+      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()+Math.random()),
+      fecha,
+      hora: horaAleatoria(franja),
+      sistolica: Math.max(90, baseSis + aleatorio(-8,8)),
+      diastolica: Math.max(50, baseDia + aleatorio(-6,6)),
+      pulso: aleatorio(55,88)
+    };
+  }
+
+  const botonDatosPrueba = $("datosPrueba");
+  if(botonDatosPrueba){
+    botonDatosPrueba.addEventListener("click", () => {
+      const confirmar = medidas.length
+        ? confirm("Esto añadirá datos de prueba a los que ya tienes. ¿Continuar?")
+        : true;
+      if(!confirmar) return;
+
+      const nuevas = [];
+      for(let i = 0; i < 365; i++){
+        const fecha = fechaHaceDias(i);
+
+        // Algunos días no tienen ninguna lectura.
+        if(Math.random() < 0.18) continue;
+
+        // Cada día puede tener lecturas de mañana, tarde, noche, varias franjas o una sola.
+        const tieneManana = Math.random() < 0.70;
+        const tieneTarde = Math.random() < 0.65;
+        const tieneNoche = Math.random() < 0.60;
+        if(!tieneManana && !tieneTarde && !tieneNoche) continue;
+
+        if(tieneManana){
+          const n = aleatorio(1,3);
+          for(let j = 0; j < n; j++) nuevas.push(nuevaMedidaPrueba(fecha, "mañana"));
+        }
+        if(tieneTarde){
+          const n = aleatorio(1,3);
+          for(let j = 0; j < n; j++) nuevas.push(nuevaMedidaPrueba(fecha, "tarde"));
+        }
+        if(tieneNoche){
+          const n = aleatorio(1,3);
+          for(let j = 0; j < n; j++) nuevas.push(nuevaMedidaPrueba(fecha, "noche"));
+        }
+      }
+
+      medidas = medidas.concat(nuevas).sort((a,b)=> (a.fecha+a.hora).localeCompare(b.fecha+b.hora));
+      guardar();
+      render();
+      alert(`Se han añadido ${nuevas.length} lecturas de prueba repartidas durante un año.`);
+    });
+  }
+
+  $("periodo").addEventListener("change", renderEstadisticas);
+
+  const botonBorrarTodo = $("borrarTodo");
+  if(botonBorrarTodo){
+    botonBorrarTodo.addEventListener("click", () => {
+      if(confirm("¿Borrar todas las mediciones?")) { medidas = []; guardar(); render(); }
+    });
+  }
+
+
+  render();
+</script>
+</body>
+</html>
