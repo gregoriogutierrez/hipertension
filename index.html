@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mi presión arterial</title>
+  <title>MI PRESIÓN ARTERIAL</title>
   <style>
     :root{
       --bg:#f4f7fb; --card:#fff; --text:#162033; --muted:#697386;
@@ -17,8 +17,8 @@
     main{max-width:1100px;margin:auto;padding:16px;display:grid;gap:16px}
     .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 8px 22px rgba(15,23,42,.06)}
     h2{font-size:1.15rem;margin:0 0 12px}
-    form{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:end}
-    form button{min-height:44px}
+    form{display:grid;grid-template-columns:1fr;gap:12px;max-width:420px;margin:0 auto;align-items:stretch}
+    form button{min-height:44px;width:100%}
     label{font-size:.85rem;color:var(--muted);display:grid;gap:5px}
     input,select,button{font:inherit;border-radius:12px;border:1px solid var(--line);padding:11px;background:white;color:var(--text)}
     select{appearance:auto}
@@ -38,8 +38,8 @@
     .right{text-align:right}
     .small{font-size:.85rem}
     @media (max-width:800px){
-      form{grid-template-columns:1fr 1fr}
-      form button{grid-column:1/-1}
+      form{grid-template-columns:1fr;max-width:100%}
+      form button{grid-column:auto}
       .grid2{grid-template-columns:1fr}
       th,td{padding:8px;font-size:.9rem}
       .hide-mobile{display:none}
@@ -51,9 +51,9 @@
 </head>
 <body>
 <header>
-  <h1>Mi presión arterial</h1>
-  <p>Dr. Alberto Marañés Antoñanzas</p>
-  <p>Registra tensión y pulso. Mañana: 06:00-11:59 · Tarde: 12:00-19:59 · Noche: 20:00-05:59.</p>
+  <h1>MI PRESIÓN ARTERIAL</h1>
+  <h1>Dr. Alberto Marañés Antoñanzas</h1>
+  <p>Especialista en hipertensión</p>
 </header>
 
 <main>
@@ -80,7 +80,18 @@
     </form>
     <p class="muted small">La franja se calcula automáticamente por la hora: mañana de 06:00 a 11:59; tarde de 12:00 a 19:59; noche de 20:00 a 05:59.</p>
   </section>
-
+<div style="
+  text-align:center;
+  margin:15px 0;
+  padding:12px;
+  background:#f0f9ff;
+  border:1px solid #bae6fd;
+  border-radius:12px;">
+  <a href="privacidad.html"
+     style="text-decoration:none;font-weight:600;color:#0369a1">
+     ℹ️ Información, privacidad, soporte y contacto
+  </a>
+</div>
   <section class="card">
     <div class="row">
       <h2 style="margin-right:auto">Estadísticas</h2>
